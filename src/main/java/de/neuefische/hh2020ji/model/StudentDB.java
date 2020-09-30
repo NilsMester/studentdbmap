@@ -1,35 +1,38 @@
 package de.neuefische.hh2020ji.model;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class StudentDB {
 
-    private ArrayList<Student> students;
+    private Map<String,Student> studentsMap=new HashMap<>();
 
     public StudentDB(List<Student> students) {
-        this.students = new ArrayList<>(students);
+        for (Student student: students){
+            studentsMap.put(""+student.getId(),student);
+        }
     }
 
     public List<Student> list(){
-        return students;
+        Collection<Student> outCollection =studentsMap.values();
+        List<Student>studentList=new ArrayList<>(outCollection);
+            studentList.sort(Comparator.comparing(Student::getId));
+        return studentList;
     }
 
 
-
     public Student randomStudent(){
+        List<Student>studentsInMap=list();
         double random = Math.random();
-        int randomIndex = (int) (random * students.size());
-        return students.get(randomIndex);
+        int randomIndex = (int) (random * studentsInMap.size());
+        return studentsInMap.get(randomIndex);
     }
 
     @Override
     public String toString(){
+        List<Student>studentsInMap=list();
         String result = "StudentDB(\n";
-        for(Student student : students) {
+        for(Student student : studentsInMap) {
             result += student.toString() + "\n";
         }
         result += ")";
@@ -37,24 +40,12 @@ public class StudentDB {
     }
 
     public void add(Student student) {
-        students.add(student);
+        studentsMap.put(""+student.getId(),student);
     }
+
 
     public void removeById(int id) {
-        Student student = findById(id);
-        if(student == null){
-            return;
-        }
-        students.remove(student);
-    }
-
-    private Student findById(int id) {
-        for(Student student: students) {
-            if(student.getId() == id) {
-                return student;
-            }
-        }
-        return null;
+      studentsMap.remove(""+id);
     }
 
 
