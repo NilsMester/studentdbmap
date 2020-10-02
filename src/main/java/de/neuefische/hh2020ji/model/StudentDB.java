@@ -9,14 +9,14 @@ public class StudentDB {
 
     public StudentDB(List<Student> students) {
         for (Student student: students){
-            studentsMap.put(""+student.getId(),student);
+            studentsMap.put(Integer.toString(student.getId()),student);
         }
     }
 
     public List<Student> list(){
         Collection<Student> outCollection =studentsMap.values();
         List<Student>studentList=new ArrayList<>(outCollection);
-            studentList.sort(Comparator.comparing(Student::getId));
+        studentList.sort(Comparator.comparing(Student::getId));
         return studentList;
     }
 
@@ -39,8 +39,19 @@ public class StudentDB {
         return result;
     }
 
-    public void add(Student student) {
-        studentsMap.put(""+student.getId(),student);
+    public void add(Student student){
+        if(studentsMap.containsKey(Integer.toString(student.getId()))){
+            throw new RuntimeException("Die ID ist bereits belegt!");
+        } else {
+            studentsMap.put(Integer.toString(student.getId()), student);
+        }
+    }
+
+    public Optional<Student> findById(int id) {
+        if (studentsMap.containsKey(id)){
+            return Optional.of(studentsMap.get(id));
+        }
+        return Optional.empty();
     }
 
 
@@ -48,5 +59,7 @@ public class StudentDB {
       studentsMap.remove(""+id);
     }
 
-
+    public void printIds(){
+        studentsMap.keySet().forEach(id -> System.out.println(id));
+    }
 }
